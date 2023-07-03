@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .btn-submit {
+            margin-top: 10px;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        /* Align columns in tables */
+        .table-container table td {
+            vertical-align: middle;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#amount').focus();
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        
+        <h2>Add Expense</h2>
+        <form method="POST" action="/">
+            <div class="form-group">
+                <label for="expense_type">Expense Type:</label>
+                <select class="form-control" name="expense_type" id="expense_type">
+                    <option value="1" {% if expense_type == "1" %}selected{% endif %}>Shared</option>
+                    <option value="2" {% if expense_type == "2" %}selected{% endif %}>Individual</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="payer">Payer:</label>
+                <select class="form-control" name="payer" id="payer">
+                    <option value="person1" {% if payer == "person1" %}selected{% endif %}>Person1</option>
+                    <option value="person2" {% if payer == "person2" %}selected{% endif %}>Person2</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Amount:</label>
+                <input type="number" step="1.0" class="form-control" name="amount" id="amount" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+        </form>
+        <br>
+        
+        <h2>Expense Overview</h2>
+        <table class="table">
+            <tr>
+                <th>Shared Expenses</th>
+            </tr>
+            <tr>
+                <td>{{ shared_expenses }}</td>
+            </tr>
+        </table>
+        <br>
+
+        <div class="table-container">
+            <table class="table">
+                <tr>
+                    <th>Person</th>
+                    <th>Total Expenses</th>
+                </tr>
+                <tr>
+                    <td>Person1</td>
+                    <td>{{ total_expenses_per_person['person1'] }}</td>
+                </tr>
+                <tr>
+                    <td>Person2</td>
+                    <td>{{ total_expenses_per_person['person2'] }}</td>
+                </tr>
+            </table>
+        </div>
+        <br>
+        
+        <div class="table-container">
+            <table class="table">
+                <tr>
+                    <th>Person</th>
+                    <th>Total Paid</th>
+                </tr>
+                <tr>
+                    <td>Person1</td>
+                    <td>{{ total_paid_per_person['person1'] }}</td>
+                </tr>
+                <tr>
+                    <td>Person2</td>
+                    <td>{{ total_paid_per_person['person2'] }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <h2>Current Calculation</h2>
+        {% if person1_owes > 0 %}
+            <p class="text-danger">Person1 owes Person2: ${{ person1_owes }}</p>
+        {% elif person1_owes < 0 %}
+            <p class="text-success">Person2 owes Person1: ${{ person2_owes }}</p>
+        {% else %}
+            <p class="text-primary">No money is owed between Person1 and Person2.</p>
+        {% endif %}
+        
+        {% if message %}
+            <p>{{ message }}</p>
+        {% endif %}
+
+        <div class="table-container">
+            <h2>Expense Table</h2>
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Expense Type</th>
+                        <th>Payer</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                        <tr>
+                            <td>{{ expense.type }}</td>
+                            <td>{{ expense.payer }}</td>
+                            <td>{{ expense.amount }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
